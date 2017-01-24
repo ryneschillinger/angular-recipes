@@ -40,9 +40,15 @@ angular.module('RecipeCtrls', ['RecipeServices'])
     });
   };
 }])
-.controller('NavCtrl', ['$scope', function($scope) {
+.controller('NavCtrl', ['$scope', '$state', 'Auth', 
+    function($scope, $state, Auth) {
+  $scope.isLoggedIn = function() {
+    return Auth.isLoggedIn()
+  };
+
   $scope.logout = function() {
-    // to implement
+    Auth.removeToken();
+    $state.go('login');
   };
 }])
 .controller('SignupCtrl', ['$scope', '$state', 'UserService', 
@@ -71,12 +77,18 @@ angular.module('RecipeCtrls', ['RecipeServices'])
     });
   };
 }])
-.controller('LoginCtrl', ['$scope', function($scope) {
+.controller('LoginCtrl', ['$scope', 'UserService', '$state', 
+    function($scope, UserService, $state) {
   $scope.user = {
     email: '',
     password: ''
   };
   $scope.userLogin = function() {
-    // to implement
+    UserService.login($scope.user).then(function(user) {
+      console.log("login response:", user);
+      if (user !== false) {
+        $state.go('home');
+      }
+    });
   };
 }]);
