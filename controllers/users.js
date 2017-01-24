@@ -10,6 +10,7 @@ router.route('/')
       return res.send(users);
     });
   })
+  // creating a user account
   .post(function(req, res) {
     // find the user first in case the email already exists
     User.findOne({ email: req.body.email }, function(err, user) {

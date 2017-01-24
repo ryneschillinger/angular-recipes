@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
@@ -5,7 +6,7 @@ var path = require('path');
 // JSON web token dependencies, including a secret key to sign the token
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
-var secret = process.env.JWT_SECRET;
+var secret = process.env.JWT_SECRET; // Your .env file must start with this "JWT_SECRET" 
 
 var app = express();
 
@@ -20,14 +21,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('morgan')('dev'));
 
-app.use('/api/recipes', require('./controllers/recipes'));
-app.use('/api/users', require('./controllers/users'));
+// app.use('/api/recipes', require('./controllers/recipes'));
+// app.use('/api/users', require('./controllers/users'));
 
 // Replace the above routes with the following
-// app.use('/api/recipes', expressJWT({secret: secret}), require('./controllers/recipes'));
-// app.use('/api/users', expressJWT({secret: secret}).unless({
-//   path: [{ url: '/api/users', methods: ['POST'] }]
-// }), require('./controllers/users'));
+app.use('/api/recipes', expressJWT({secret: secret}), require('./controllers/recipes'));
+app.use('/api/users', expressJWT({secret: secret}).unless({
+  path: [{ url: '/api/users', methods: ['POST'] }]
+}), require('./controllers/users'));
 
 // this middleware will check if expressJWT did not authorize the user, and return a message
 app.use(function (err, req, res, next) {
@@ -37,6 +38,7 @@ app.use(function (err, req, res, next) {
 });
 
 // POST /api/auth - if authenticated, return a signed JWT
+// this is where the signing in happens
 app.post('/api/auth', function(req, res) {
   User.findOne({ email: req.body.email }, function(err, user) {
     // return 401 if error or no user

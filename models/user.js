@@ -31,6 +31,7 @@ UserSchema.methods.authenticated = function(password) {
   return isAuthenticated ? user : false;
 };
 
+// Example of hook in MongoDB schema:
 UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) {
     next();
