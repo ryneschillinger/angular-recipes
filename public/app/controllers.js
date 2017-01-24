@@ -45,13 +45,30 @@ angular.module('RecipeCtrls', ['RecipeServices'])
     // to implement
   };
 }])
-.controller('SignupCtrl', ['$scope', function($scope) {
+.controller('SignupCtrl', ['$scope', '$state', 'UserService', 
+    function($scope, $state, UserService) {
   $scope.user = {
     email: '',
     password: ''
   };
   $scope.userSignup = function() {
     // to implement
+    var params = {
+      email: $scope.user.email,
+      password: $scope.user.password
+    }
+    UserService.createAccount(params).then(function(user) {
+      if (user === false) {
+        console.log("user create error");
+      } else {
+        console.log("got user:", user);
+        $state.go('home'); // redirect to homepage upon successful signup
+        // $location.path = '/';
+
+        // more complex example of state.go:
+        // $state.go('profile', {user: 12121, date_lt: '2008'});
+      }
+    });
   };
 }])
 .controller('LoginCtrl', ['$scope', function($scope) {
